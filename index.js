@@ -1,48 +1,29 @@
 const express = require('express');
 const app = express();
-const port = 80;
+const fs = require('fs');
 
+// Ruta raíz
 app.get('/', (req, res) => {
-  const html = `
-    <html>
-        <head>
-            <title>Página de ejemplo</title>
-            <style>
-            .navbar {
-                background-color: #333;
-                color: #fff;
-                padding: 10px;
-            }
-            .navbar ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            .navbar li {
-                display: inline;
-                margin-right: 10px;
-            }
-            .navbar a {
-                color: #fff;
-                text-decoration: none;
-            }
-            </style>
-        </head>
-        <body>
-            <div class="navbar">
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/about">Acerca de</a></li>
-                    <li><a href="/contact">Contacto</a></li>
-                </ul>
-            </div>
-        <h1>Hola Che</h1>
-    </body>
-    </html>
-    `;
-    res.send(html);
+  fs.readFile('index.html', (err, data) => {
+    if (err) {
+      res.status(500).send('Error interno del servidor');
+    } else {
+      res.status(200).type('text/html').send(data);
+    }
+  });
 });
 
-app.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`);
+// Otra ruta
+app.get('/otra-ruta', (req, res) => {
+  res.status(200).type('text/plain').send('Hola, esta es otra ruta');
+});
+
+// Ruta no encontrada
+app.use((req, res) => {
+  res.status(404).type('text/plain').send('Página no encontrada');
+});
+
+// Iniciar el servidor
+app.listen(80, () => {
+  console.log('Servidor escuchando en el puerto 80');
 });
